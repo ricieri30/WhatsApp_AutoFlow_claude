@@ -16,6 +16,9 @@ const contactsMap = new Map(); // jid → { id, name, phone }
 // Mapa auxiliar: LID → número real (quando o WhatsApp fornece)
 const lidToPhone = new Map();
 
+// Cache de IDs de mensagens já processadas (anti-duplicata)
+const processedMsgs = new Set();
+
 function normalizePhone(jid = '') {
   return jid.replace(/@s\.whatsapp\.net$/, '').replace(/@.*$/, '');
 }
@@ -201,28 +204,94 @@ async function start() {
     });
 
     // 7. Mensagens recebidas (captura pushName + mapeia LID→número)
-    sock.ev.on("messages.upsert", ({ messages }) => {
+    sock.ev.on("messages.upsert", async ({ messages, type }) => {
       for (const msg of messages) {
         if (msg.key.fromMe) continue;
-        
+
         const remoteJid = msg.key.remoteJid;
         if (!remoteJid || remoteJid.includes('@g.us')) continue;
-        
+
         // Capturar mapeamento LID → número real quando disponível
-        // O Baileys pode fornecer o número real em key.remoteJidAlt ou similar
         const altJid = msg.key.remoteJidAlt || msg.key.senderPn || msg.verifiedBizName;
-        
+
         if (isLid(remoteJid) && altJid && isRealPhoneJid(altJid)) {
           const lidKey = normalizePhone(remoteJid);
           const realPhone = normalizePhone(altJid);
           lidToPhone.set(lidKey, realPhone);
         }
-        
+
         // Adicionar/atualizar contato com pushName
         if (msg.pushName) {
-          // Se temos um JID alternativo com número real, usar ele
           const contactJid = (altJid && isRealPhoneJid(altJid)) ? altJid : remoteJid;
           addContact({ id: contactJid, notify: msg.pushName });
+        }
+
+        // ── EXTRAIR TEXTO DA MENSAGEM ──────────────────────────────
+        const m = msg.message || {};
+        const text =
+          m.conversation ||
+          m.extendedTextMessage?.text ||
+          m.imageMessage?.caption ||
+          m.videoMessage?.caption ||
+          m.buttonsResponseMessage?.selectedDisplayText ||
+          m.listResponseMessage?.title ||
+          "";
+
+        if (!text) continue; // sem texto (ex: figurinha, áudio) → ignora
+
+        // ── ENVIAR PARA A API (webhook) p/ disparar auto-resposta ──
+        // Só dispara em mensagens novas (não no carregamento de histórico)
+        if (type && type !== "notify") continue;
+
+        // Ignorar mensagens antigas (mais de 60s) — evita responder histórico
+        // que chega marcado como "notify" logo após reconexão
+        const msgTs = Number(msg.messageTimestamp || 0);
+        if (msgTs && (Date.now() / 1000 - msgTs) > 60) {
+          continue;
+        }
+
+        // Proteção anti-duplicata: não processar a mesma mensagem 2x
+        const msgId = msg.key.id;
+        if (msgId) {
+          if (processedMsgs.has(msgId)) continue;
+          processedMsgs.add(msgId);
+          // Limitar tamanho do cache (manter últimas ~500)
+          if (processedMsgs.size > 500) {
+            const first = processedMsgs.values().next().value;
+            processedMsgs.delete(first);
+          }
+        }
+
+        // Resolver o melhor número para identificar o contato
+        const lidNum  = normalizePhone(remoteJid);
+        const realNum = (altJid && isRealPhoneJid(altJid))
+          ? normalizePhone(altJid)
+          : (lidToPhone.get(lidNum) || null);
+
+        const webhookUrl = process.env.WEBHOOK_URL;
+        if (!webhookUrl) continue;
+
+        try {
+          // Timeout de 10s para não travar se a API não responder
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 10000);
+          await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({
+              from:     realNum || lidNum,  // número p/ resposta e match
+              fromLid:  lidNum,              // LID (fallback p/ match)
+              fromReal: realNum,             // número real, se houver
+              replyTo:  remoteJid,           // JID original p/ responder
+              text,
+              pushName: msg.pushName || "",
+            }),
+          });
+          clearTimeout(timeout);
+          console.log(`📨 Webhook → API: from=${realNum || lidNum} text="${text.slice(0,40)}"`);
+        } catch (e) {
+          console.error(`❌ Erro ao chamar webhook: ${e.message}`);
         }
       }
     });
@@ -316,14 +385,23 @@ app.get("/contacts", (req, res) => {
 });
 
 app.post("/send", async (req, res) => {
-  const { to, text } = req.body;
+  const { to, text, replyTo } = req.body;
   if (!to || !text) return res.status(400).json({ error: "to_and_text_required" });
   if (status !== "connected") return res.status(409).json({ error: "not_connected" });
-  
+
   try {
-    const jid = to.includes("@s.whatsapp.net") ? to : `${to}@s.whatsapp.net`;
+    // Preferir o JID original (replyTo) quando fornecido — funciona mesmo
+    // quando o contato usa LID. Senão, montar a partir do número.
+    let jid;
+    if (replyTo && (replyTo.includes("@s.whatsapp.net") || replyTo.includes("@lid"))) {
+      jid = replyTo;
+    } else if (to.includes("@")) {
+      jid = to;
+    } else {
+      jid = `${to}@s.whatsapp.net`;
+    }
     await sock.sendMessage(jid, { text });
-    console.log(`📤 Mensagem enviada para ${to}`);
+    console.log(`📤 Mensagem enviada para ${jid}`);
     res.json({ ok: true });
   } catch (error) {
     console.error(`❌ Erro ao enviar mensagem:`, error.message);
