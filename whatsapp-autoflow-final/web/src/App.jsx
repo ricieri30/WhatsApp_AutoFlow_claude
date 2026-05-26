@@ -502,6 +502,60 @@ function Login({ onLogged }){
 }
 
 // ══════════════════════════════════════════════════════════════════
+// VIEW: ProfileView — Troca de senha
+// ══════════════════════════════════════════════════════════════════
+function ProfileView({ showToast }) {
+  const [form, setForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' })
+  const [busy, setBusy] = useState(false)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!form.currentPassword || !form.newPassword) return showToast('Preencha todos os campos', 'red')
+    if (form.newPassword !== form.confirmPassword) return showToast('As senhas não conferem', 'red')
+    if (form.newPassword.length < 6) return showToast('A nova senha deve ter no mínimo 6 caracteres', 'red')
+
+    setBusy(true)
+    try {
+      await api('auth/change-password', { method: 'POST', body: { currentPassword: form.currentPassword, newPassword: form.newPassword } })
+      showToast('Senha alterada com sucesso!', 'indigo')
+      setForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    } catch (err) {
+      showToast(err.message === 'HTTP_401' ? 'Senha atual incorreta' : 'Erro ao trocar senha', 'red')
+    } finally { setBusy(false) }
+  }
+
+  return (
+    <div className='p-6 max-w-md mx-auto space-y-6'>
+      <div>
+        <h1 className='text-xl font-bold text-white'>Meu Perfil</h1>
+        <p className='text-sm text-slate-500 mt-0.5'>Gerencie sua conta e segurança</p>
+      </div>
+
+      <div className='bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl'>
+        <form onSubmit={handleSubmit} className='space-y-4'>
+          <Field label='Senha Atual'>
+            <input type='password' className={inputCls} value={form.currentPassword}
+              onChange={e => setForm(p => ({ ...p, currentPassword: e.target.value }))} placeholder='••••••••' />
+          </Field>
+          <Field label='Nova Senha'>
+            <input type='password' className={inputCls} value={form.newPassword}
+              onChange={e => setForm(p => ({ ...p, newPassword: e.target.value }))} placeholder='••••••••' />
+          </Field>
+          <Field label='Confirmar Nova Senha'>
+            <input type='password' className={inputCls} value={form.confirmPassword}
+              onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))} placeholder='••••••••' />
+          </Field>
+          <button disabled={busy} className='w-full rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white py-2.5 font-medium flex items-center justify-center gap-2 transition-colors'>
+            {busy ? <Loader2 className='h-4 w-4 animate-spin' /> : null}
+            Alterar Senha
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
+// ══════════════════════════════════════════════════════════════════
 // APP PRINCIPAL
 // ══════════════════════════════════════════════════════════════════
 export default function App(){
@@ -670,6 +724,7 @@ export default function App(){
           <SidebarItem icon={ShieldCheck}     label='Auditoria'    active={view==='audit'}     onClick={()=>setView('audit')}/>
           <SidebarItem icon={Calendar}        label='Assinaturas'  active={view==='subs'}      onClick={()=>setView('subs')}/>
           <SidebarItem icon={Smartphone}      label='WhatsApp'     active={view==='whatsapp'}  onClick={()=>setView('whatsapp')}/>
+          <SidebarItem icon={Settings}        label='Perfil'       active={view==='profile'}   onClick={()=>setView('profile')}/>
         </nav>
 
         {/* Footer sidebar */}
@@ -986,6 +1041,7 @@ export default function App(){
         {view==='autoReply' && <AutoReplyView />}
         {view==='templates' && <ScheduledView templates={templates}/> }
         {view==='subs'      && <SubscriptionsView /> }
+        {view==='profile'   && <ProfileView showToast={showToast} />}
       </main>
 
       {/* ── MODAL Nova Recorrência ── */}

@@ -90,6 +90,34 @@ router.post("/auth/login", async (req, res) => {
   res.json({ token, user: { email: u.email, role: u.role } });
 });
 
+router.post("/auth/change-password", auth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) return res.status(400).json({ error: "missing_fields" });
+
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    if (!user) return res.status(404).json({ error: "user_not_found" });
+
+    const ok = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!ok) return res.status(401).json({ error: "invalid_current_password" });
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    await Audit.create({
+      who: req.user.email,
+      action: "CHANGE_PASSWORD",
+      entity: String(user._id),
+      detail: `Alterou a própria senha`,
+      ok: true,
+    });
+
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: "internal_error", message: e.message });
+  }
+});
+
 // ── Dashboard (enriquecido) ───────────────────────────────────────
 router.get("/dashboard", auth, async (_req, res) => {
   const [recurringActive, recurringTotal, contacts, templates, recentAudit] = await Promise.all([
