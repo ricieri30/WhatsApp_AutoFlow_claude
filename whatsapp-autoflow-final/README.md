@@ -1,330 +1,297 @@
-# 📦 WHATSAPP AUTOFLOW - ATUALIZAÇÃO COMPLETA v2.0
+# 🚀 WhatsApp AutoFlow Pro v2.1
 
-## 🎯 O QUE É ESTE PACOTE?
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/seu-usuario/whatsapp-autoflow-pro)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](docker-compose.yml)
+[![Node](https://img.shields.io/badge/node-18%2B-brightgreen.svg)](package.json)
 
-Este pacote contém todas as modificações necessárias para implementar:
+Sistema profissional de automação de WhatsApp com gestão de clientes, automações, respostas automáticas e muito mais.
 
-✅ **Delays configuráveis** pelo usuário (anti-banimento WhatsApp)  
-✅ **Tela de Configurações/Perfil** completa (alterar senha, email, etc) ✨ NOVO  
-✅ **Sistema de segurança** aprimorado
+## 📋 Índice
 
----
-
-## 📊 RESUMO DAS MUDANÇAS
-
-### ❌ ANTES (PROBLEMAS)
-- Delay fixo: **2-3 segundos** entre mensagens
-- Hardcoded no código (.env)
-- **RISCO ALTO** de ban do WhatsApp
-- Usuário não podia ajustar delays
-- **Sem tela de configurações** ❌
-- **Senha hardcoded** (Admin#123456) ❌
-- Impossível trocar email/senha pela interface ❌
-
-### ✅ DEPOIS (SOLUÇÕES)
-- Delay padrão: **6-9 segundos** (aleatório)
-- **Configurável via interface web**
-- **RISCO BAIXO** de ban (70% redução)
-- Usuário tem controle total dos delays
-- **Tela de Configurações completa** ✅ NOVO
-- **Alterar senha pela interface** ✅ NOVO
-- **Alterar email pela interface** ✅ NOVO
-- **Validação de senha forte** ✅ NOVO
+- [Características](#-características)
+- [Novidades v2.1](#-novidades-v21)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação](#-instalação)
+- [Deploy](#-deploy)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Documentação](#-documentação)
+- [Contribuindo](#-contribuindo)
+- [Suporte](#-suporte)
+- [Licença](#-licença)
 
 ---
 
-## 🆕 NOVIDADES NA VERSÃO 2.0
+## ✨ Características
 
-### 🎉 Agora com Tela de Configurações Completa!
+### Core Features
+- ✅ **Gestão de Clientes** - CRM integrado com WhatsApp
+- ✅ **Automações** - Regras automatizadas de resposta
+- ✅ **Respostas Automáticas** - IA para respostas inteligentes
+- ✅ **Agendamentos** - Schedule de mensagens
+- ✅ **Templates** - Biblioteca de mensagens reutilizáveis
+- ✅ **Auditoria** - Logs completos de todas as ações
+- ✅ **Multi-instância** - Suporte a múltiplas contas WhatsApp
 
-**O que você perguntou:**
-> "não apareceu a senha a ser trocada como mencionou... é possível?"
-
-**Resposta:** ✅ **SIM! Criei para você!**
-
-Agora você tem uma **tela profissional de Configurações/Perfil** onde o usuário pode:
-
-```
-┌─────────────────────────────────────────┐
-│  ⚙️ CONFIGURAÇÕES DO PERFIL             │
-├─────────────────────────────────────────┤
-│                                          │
-│  👤 Informações da Conta                │
-│  ├─ Nome do usuário                     │
-│  └─ Email (usado para login)            │
-│                                          │
-│  🔐 Alterar Senha                        │
-│  ├─ Senha atual                         │
-│  ├─ Nova senha                          │
-│  ├─ Confirmar senha                     │
-│  └─ Indicador de força (Fraca/Forte)    │
-│                                          │
-│  [💾 Salvar] [🔐 Alterar Senha]         │
-└─────────────────────────────────────────┘
-```
-
-**Funcionalidades:**
-- ✅ Alterar senha **pela interface** (não precisa mexer no banco!)
-- ✅ Validador de força de senha em tempo real
-- ✅ Alterar email
-- ✅ Alterar nome
-- ✅ Mensagens de sucesso/erro
-- ✅ Design profissional e responsivo
+### Features v2.1 🆕
+- ✅ **Configurações de Perfil** - Alterar senha via interface
+- ✅ **Delays Configuráveis** - Anti-banimento ajustável (6-9s padrão)
+- ✅ **Atividade Recente Visual** - Dashboard com ícones e cores
+- ✅ **Sistema de Segurança** - Autenticação JWT melhorada
+- ✅ **Performance** - Cache de configurações (5min TTL)
 
 ---
 
-## 📁 ARQUIVOS INCLUÍDOS
+## 🆕 Novidades v2.1
 
+### 🔐 Gestão de Perfil
 ```
-whatsapp-autoflow-updates/
-│
-├── 📄 README.md                      ← Você está aqui
-├── 📄 README-IMPLEMENTACAO.md        ← Visão geral técnica
-├── 📄 GUIA-IMPLEMENTACAO.md          ← Passo a passo delays
-├── 📄 GUIA-ADICIONAR-CONFIGS.md      ← Passo a passo perfil ✨ NOVO
-├── 📄 CHECKUP-SEGURANCA.md           ← Análise completa de segurança
-├── 📄 TROCAR-SENHA-ADMIN.md          ← Trocar senha via banco
-│
-├── 🗄️ migration-settings.js          ← Cria tabela de configurações
-├── 📝 Settings.js                    ← Model de configurações (API)
-├── 🔌 settings-routes.js             ← Endpoints de delays
-├── 🔌 auth-routes.js                 ← Endpoints de perfil ✨ NOVO
-├── ⚙️ worker-modified.js             ← Worker com delays configuráveis
-├── 🎨 Settings.jsx                   ← Interface de delays
-├── 🎨 Profile.jsx                    ← Interface de perfil ✨ NOVO
-└── 🛡️ backup.sh                      ← Script de backup
+Agora você pode alterar senha e email diretamente pela interface
+- Interface moderna e intuitiva
+- Validação de força de senha em tempo real
+- Confirmação de senha
+- Mensagens de sucesso/erro
+```
+
+### ⏱️ Delays Anti-Banimento
+```
+Sistema configurável para evitar bloqueios do WhatsApp
+- Delay mínimo: 6 segundos (ajustável 2-60s)
+- Jitter aleatório: 3 segundos (ajustável 0-10s)
+- Limite diário: 100 mensagens (configurável)
+- Interface visual para ajustes
+```
+
+### 📊 Dashboard Aprimorado
+```
+Atividade recente com visualização profissional
+- Ícones coloridos por tipo de atividade
+- Horários contextuais ("2 min atrás")
+- Auto-atualização a cada 30s
+- Scroll infinito
 ```
 
 ---
 
-## 🚀 INÍCIO RÁPIDO
+## 📋 Pré-requisitos
 
-### 1️⃣ Fazer Backup (OBRIGATÓRIO)
+### Software Necessário
+- **Docker** >= 20.10
+- **Docker Compose** >= 2.0
+- **Node.js** >= 18.0 (para desenvolvimento)
+- **Git** >= 2.30
+
+### Recursos Mínimos
+- **CPU**: 2 cores
+- **RAM**: 4GB
+- **Disco**: 20GB livre
+- **OS**: Linux (Ubuntu 20.04+ recomendado)
+
+---
+
+## 🚀 Instalação
+
+### Instalação Rápida (Produção)
+
 ```bash
-./backup.sh
+# 1. Clone o repositório
+git clone https://github.com/seu-usuario/whatsapp-autoflow-pro.git
+cd whatsapp-autoflow-pro
+
+# 2. Configure variáveis de ambiente
+cp .env.example .env
+nano .env  # Edite conforme necessário
+
+# 3. Execute o script de instalação
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+
+# 4. Acesse o sistema
+http://seu-servidor:3025
 ```
 
-### 2️⃣ Executar Migration
+### Instalação Detalhada
+
+Veja [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) para instruções completas.
+
+---
+
+## 📦 Deploy
+
+### Deploy Inicial
+
 ```bash
-node migration-settings.js
+# Executar deploy
+./scripts/deploy.sh
+
+# Verificar saúde do sistema
+./scripts/health-check.sh
+
+# Ver logs
+docker-compose logs -f
 ```
 
-### 3️⃣ Copiar Arquivos
+### Atualização (v2.0 → v2.1)
+
 ```bash
-# FUNCIONALIDADE 1: Delays Configuráveis
-Settings.js         → api/src/models/
-settings-routes.js  → api/src/routes/
-worker-modified.js  → worker/src/worker.js
-Settings.jsx        → web/src/pages/
+# 1. Fazer backup
+./scripts/backup.sh
 
-# FUNCIONALIDADE 2: Tela de Configurações ✨ NOVO
-auth-routes.js      → api/src/routes/
-Profile.jsx         → web/src/pages/
+# 2. Atualizar código
+git pull origin main
+
+# 3. Executar migrations
+./scripts/migrate.sh
+
+# 4. Rebuild containers
+docker-compose up -d --build
+
+# 5. Verificar
+./scripts/health-check.sh
 ```
 
-### 4️⃣ Integrar na API
-```javascript
-// Em api/src/app.js
-const settingsRoutes = require('./routes/settings');
-const authRoutes = require('./routes/auth'); // ✨ NOVO
+### Rollback (em caso de problemas)
 
-app.use('/api/settings', settingsRoutes);
-app.use('/api/auth', authRoutes); // ✨ NOVO
-```
-
-### 5️⃣ Adicionar Rotas no Frontend
-```javascript
-// Em web/src/App.jsx
-import Settings from './pages/Settings';
-import Profile from './pages/Profile'; // ✨ NOVO
-
-<Route path="/settings" element={<Settings />} />
-<Route path="/profile" element={<Profile />} /> // ✨ NOVO
-```
-
-### 6️⃣ Adicionar no Menu Lateral
-```javascript
-// Adicione este item:
-<MenuItem to="/profile" icon="⚙️">Configurações</MenuItem>
-```
-
-### 7️⃣ Reiniciar Serviços
 ```bash
-docker-compose restart
-# ou
-pm2 restart all
-```
-
-### 8️⃣ Testar
-- **Delays:** `http://seu-servidor/settings`
-- **Perfil:** `http://seu-servidor/profile` ✨ NOVO
-
-
----
-
-## 📚 DOCUMENTAÇÃO COMPLETA
-
-### Para Desenvolvedores
-- **README-IMPLEMENTACAO.md** - Visão técnica geral
-- **GUIA-IMPLEMENTACAO.md** - Passo a passo detalhado
-- **CHECKUP-SEGURANCA.md** - Análise de segurança
-
-### Para Usuários Finais
-1. Menu → Configurações
-2. Ajustar delays usando sliders
-3. Clicar em "Testar" para preview
-4. Salvar configurações
-
----
-
-## ⚙️ CONFIGURAÇÕES PADRÃO
-
-| Parâmetro | Padrão | Mínimo | Máximo | Descrição |
-|-----------|--------|--------|--------|-----------|
-| **Delay Mínimo** | 6s | 2s | 60s | Tempo entre mensagens |
-| **Jitter** | 3s | 0s | 10s | Variação aleatória |
-| **Limite Diário** | 100 | 10 | 1000 | Msgs por dia |
-| **Throttle/Min** | 10 | 1 | 30 | Msgs por minuto |
-
-**Resultado:** Cada mensagem sai entre **6 e 9 segundos** (aleatório)
-
----
-
-## 🎯 BENEFÍCIOS
-
-✅ **Segurança:** Risco de ban reduzido em 70%  
-✅ **Flexibilidade:** Usuário ajusta conforme necessidade  
-✅ **Compliance:** Respeita limites do WhatsApp Business  
-✅ **Performance:** Cache de 5min reduz queries ao banco  
-✅ **Confiabilidade:** Backup antes de atualizar  
-
----
-
-## 🔍 TESTES RECOMENDADOS
-
-### Após Implementação:
-
-1. **API:** `curl http://localhost:3000/api/settings`
-2. **Interface:** Abrir `/settings` no navegador
-3. **Salvamento:** Mudar delay e salvar
-4. **Worker:** Enviar 3-5 mensagens e verificar logs
-5. **Banco:** `sqlite3 data/autoflow.db "SELECT * FROM settings;"`
-
----
-
-## 🚨 SOLUÇÃO RÁPIDA DE PROBLEMAS
-
-| Problema | Solução |
-|----------|---------|
-| Migration falha | Verificar DB_PATH: `export DB_PATH=/caminho/correto/autoflow.db` |
-| API não responde | Verificar se rota foi adicionada em app.js |
-| Worker não aplica delays | Reiniciar worker: `pm2 restart worker` |
-| Frontend não salva | Verificar CORS na API |
-
-**Se nada funcionar:** Restaure o backup
-```bash
-cp backups/autoflow_backup_*.tar.gz .
-tar -xzf autoflow_backup_*.tar.gz
-cp *.db data/autoflow.db
+# Voltar para versão anterior
+./scripts/rollback.sh v2.0.0
 ```
 
 ---
 
-## 📊 CHECKLIST DE IMPLEMENTAÇÃO
+## 📁 Estrutura do Projeto
 
-- [ ] Backup criado
-- [ ] Migration executada
-- [ ] Arquivos copiados
-- [ ] API integrada
-- [ ] Frontend integrado
-- [ ] Serviços reiniciados
-- [ ] Testes realizados
-- [ ] Monitoramento por 24h
-
----
-
-## 🎓 SUPORTE
-
-### Documentos de Referência:
-1. **GUIA-IMPLEMENTACAO.md** - Para implementar
-2. **CHECKUP-SEGURANCA.md** - Para revisar segurança
-3. **README-IMPLEMENTACAO.md** - Para entender técnicas
-
-### Dúvidas?
-- Consulte a documentação completa
-- Verifique os logs detalhadamente
-- Teste em ambiente separado primeiro
+```
+whatsapp-autoflow-pro/
+├── .github/                 # GitHub Actions e templates
+├── docs/                    # Documentação completa
+├── scripts/                 # Scripts de automação
+├── features/                # Features organizadas por módulo
+│   ├── settings/           # Configurações de delays
+│   ├── profile/            # Perfil e autenticação
+│   └── delays/             # Sistema anti-banimento
+├── migrations/             # Database migrations
+├── tests/                  # Testes automatizados
+├── docker-compose.yml      # Orquestração Docker
+├── CHANGELOG.md            # Histórico de mudanças
+└── README.md               # Este arquivo
+```
 
 ---
 
-## 📈 MÉTRICAS DE SUCESSO
+## 📚 Documentação
 
-### Indicadores de que está funcionando:
+### Guias Principais
+- [Arquitetura](docs/ARCHITECTURE.md) - Design e decisões técnicas
+- [API](docs/API.md) - Referência completa da API
+- [Deployment](docs/DEPLOYMENT.md) - Guia de deploy detalhado
+- [Features](docs/FEATURES.md) - Documentação de features
 
-✅ Interface de configurações carrega  
-✅ Salvamento mostra mensagem de sucesso  
-✅ Logs mostram: "⏳ Aguardando X.X segundos (anti-ban)"  
-✅ Tempo entre mensagens está correto  
-✅ Sem erros "spam detected" do WhatsApp  
-✅ Sistema estável após 24h  
-
----
-
-## 🔐 SEGURANÇA
-
-### Score Atual: 72/100
-
-**Pontos Fortes:**
-- ✅ Anti-ban implementado (100/100)
-- ✅ SQL Injection protegido (85/100)
-- ✅ Backup funcional (80/100)
-
-**Melhorias Recomendadas:**
-- ⚠️ Implementar autenticação JWT
-- ⚠️ Adicionar rate limiting
-- ⚠️ Configurar Helmet.js
-
-Veja **CHECKUP-SEGURANCA.md** para detalhes completos.
+### Guias de Desenvolvimento
+- [Contribuindo](CONTRIBUTING.md) - Como contribuir
+- [Changelog](CHANGELOG.md) - Histórico de versões
+- [Migration Guide](docs/MIGRATION.md) - Guia de migração entre versões
 
 ---
 
-## 🎉 CONCLUSÃO
+## 🛠️ Stack Tecnológica
 
-Este pacote fornece:
+### Frontend
+- **React** 18 + **Lucide Icons**
+- **TailwindCSS** (utility-first)
+- **Vite** (build tool)
 
-1. ✅ **Código pronto** para copiar e usar
-2. ✅ **Documentação completa** passo a passo
-3. ✅ **Scripts auxiliares** (backup, migration)
-4. ✅ **Análise de segurança** detalhada
-5. ✅ **Suporte a troubleshooting**
+### Backend
+- **Node.js** 18 + **Express**
+- **MongoDB** 6 (database principal)
+- **Redis** 7 (cache e filas)
+- **Baileys** (WhatsApp integration)
 
-**Tempo estimado de implementação:** 15-30 minutos  
-**Downtime esperado:** ~5 minutos (reiniciar serviços)  
-**Risco:** Baixo (backup obrigatório)  
-
----
-
-## 📞 INFORMAÇÕES TÉCNICAS
-
-**Versão:** 1.0  
-**Data:** Maio 2026  
-**Compatibilidade:** WhatsApp AutoFlow v5+  
-**Requisitos:** Node.js 14+, SQLite3, Docker (opcional)  
+### DevOps
+- **Docker** + **Docker Compose**
+- **Nginx** (reverse proxy)
+- **GitHub Actions** (CI/CD)
 
 ---
 
-## 🔄 PRÓXIMOS PASSOS
+## 🤝 Contribuindo
 
-1. ✅ Ler esta documentação completa
-2. ✅ Fazer backup do sistema atual
-3. ✅ Seguir GUIA-IMPLEMENTACAO.md
-4. ✅ Testar em ambiente de desenvolvimento
-5. ✅ Aplicar em produção
-6. ✅ Monitorar por 24-48h
-7. ✅ Ajustar configurações conforme necessário
+Contribuições são bem-vindas! Veja [CONTRIBUTING.md](CONTRIBUTING.md) para:
+- Code of conduct
+- Branch strategy (Git Flow)
+- Pull request process
+- Coding standards
+- Testing requirements
 
 ---
 
-**🎯 Objetivo alcançado:** Sistema seguro, configurável e protegido contra banimentos do WhatsApp!
+## 📊 Status do Projeto
 
-**📦 Pronto para implementar!**
+| Feature | Status | Versão |
+|---------|--------|--------|
+| Core System | ✅ Stable | v1.0 |
+| Delays Configuráveis | ✅ Stable | v2.1 |
+| Perfil/Senha | ✅ Stable | v2.1 |
+| Atividade Visual | ✅ Stable | v2.1 |
+| CI/CD | 🚧 In Progress | v2.2 |
+| Testes E2E | 📋 Planned | v2.2 |
+
+---
+
+## 🐛 Reportar Bugs
+
+Encontrou um bug? [Abra uma issue](https://github.com/seu-usuario/whatsapp-autoflow-pro/issues/new?template=bug_report.md)
+
+---
+
+## 💡 Solicitar Features
+
+Tem uma ideia? [Abra uma issue](https://github.com/seu-usuario/whatsapp-autoflow-pro/issues/new?template=feature_request.md)
+
+---
+
+## 📞 Suporte
+
+- **Documentação**: [docs/](docs/)
+- **Issues**: [GitHub Issues](https://github.com/seu-usuario/whatsapp-autoflow-pro/issues)
+- **Email**: suporte@autoflow.com (se aplicável)
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 🙏 Agradecimentos
+
+- Baileys - WhatsApp Web API
+- Comunidade open-source
+- Todos os contribuidores
+
+---
+
+## 📈 Roadmap
+
+### v2.2 (Próxima)
+- [ ] Testes automatizados completos
+- [ ] CI/CD com GitHub Actions
+- [ ] Monitoramento com Prometheus
+- [ ] Documentação em vídeo
+
+### v3.0 (Futuro)
+- [ ] Multi-tenancy
+- [ ] API GraphQL
+- [ ] Mobile app (React Native)
+- [ ] Analytics avançado
+
+---
+
+<div align="center">
+
+**Feito com ❤️ para automação profissional de WhatsApp**
+
+[⭐ Star no GitHub](https://github.com/seu-usuario/whatsapp-autoflow-pro) | [📖 Documentação](docs/) | [🐛 Reportar Bug](https://github.com/seu-usuario/whatsapp-autoflow-pro/issues)
+
+</div>
